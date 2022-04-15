@@ -2,4 +2,10 @@
 
 
 #include "RPG3DGameModeBase.h"
+#include "ActionRPGCharacter.h"
+
+ARPG3DGameModeBase::ARPG3DGameModeBase()
+{
+	DefaultPawnClass = AActionRPGCharacter::StaticClass();
+}
 

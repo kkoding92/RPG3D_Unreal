@@ -13,5 +13,7 @@ UCLASS()
 class RPG3D_API ARPG3DGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	ARPG3DGameModeBase();
 };
