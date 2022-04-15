@@ -6,6 +6,14 @@
 #include "GameFramework/Character.h"
 #include "ActionRPGCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class EMovementStatus : uint8
+{
+	EMS_Normal UMETA(DisplayName = "Normal"),
+	EMS_Dead UMETA(DisplayName = "DEAD"),
+	EMS_MAX UMETA(DisplayName = "DefaultMax")
+};
+
 UCLASS()
 class RPG3D_API AActionRPGCharacter : public ACharacter
 {
@@ -19,24 +27,25 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Jump() override;
+
 	void UpDown(float Value);
 	void LeftRight(float Value);
 	void Yaw(float Value);
+	void Pitch(float Value);
+	void CameraMoveOn();
+	void CameraMoveOff();
 	void Attack();
 
-	UFUNCTION()
-	float GetUpDownValue() { return UpDownValue; }
 
-	UFUNCTION()
-	float GetLeftRightValue() { return LeftRightValue; }
-
+public:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
@@ -50,15 +59,15 @@ private:
 	UPROPERTY()
 	class UCharacterAnimInstance* AnimInstance;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Enums", Meta = (AllowPrivateAccess = true))
+	EMovementStatus MovementStatus;
+
 	UPROPERTY(VisibleAnywhere)
 	bool IsAttacking = false;
 
+	UPROPERTY(VisibleAnywhere)
+	bool CameraToggle = false;
+
 	UPROPERTY()
 	int32 AttackIndex = 0;
-
-	UPROPERTY()
-	float UpDownValue = 0;
-
-	UPROPERTY()
-	float LeftRightValue = 0;
 };

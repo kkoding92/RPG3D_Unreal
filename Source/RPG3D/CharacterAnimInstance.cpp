@@ -38,9 +38,6 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (IsValid(Character))
 		{
 			IsFalling = Character->GetMovementComponent()->IsFalling();
-
-			Vertical = Character->GetUpDownValue();
-			Horizontal = Character->GetLeftRightValue();
 		}
 	}
 }
