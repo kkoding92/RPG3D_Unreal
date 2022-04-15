@@ -5,11 +5,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "CharacterAnimInstance.h"
 
 // Sets default values
 AActionRPGCharacter::AActionRPGCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -36,7 +37,9 @@ AActionRPGCharacter::AActionRPGCharacter()
 void AActionRPGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
+	AnimInstance->OnMontageEnded.AddDynamic(this, &AActionRPGCharacter::OnAttackMontageEnded);
 }
 
 // Called every frame
@@ -54,23 +57,37 @@ void AActionRPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &AActionRPGCharacter::UpDown);
 	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &AActionRPGCharacter::LeftRight);
 	PlayerInputComponent->BindAxis(TEXT("Yaw"), this, &AActionRPGCharacter::Yaw);
-	
+
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AActionRPGCharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AActionRPGCharacter::Attack);
+}
+
+void AActionRPGCharacter::Attack()
+{
+	if (IsAttacking)
+		return;
+
+	AnimInstance->PlayAttackMontage();
+	AnimInstance->JumpToSection(AttackIndex);
+
+	AttackIndex = (AttackIndex + 1) % 3;
+	IsAttacking = true;
+}
+
+void AActionRPGCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttacking = false;
 }
 
 void AActionRPGCharacter::UpDown(float Value)
 {
-	if (Value == 0.f)
-		return;
-
+	UpDownValue = Value;
 	AddMovementInput(GetActorForwardVector(), Value);
 }
 
 void AActionRPGCharacter::LeftRight(float Value)
 {
-	if (Value == 0.f)
-		return;
-
+	LeftRightValue = Value;
 	AddMovementInput(GetActorRightVector(), Value);
 }
 
