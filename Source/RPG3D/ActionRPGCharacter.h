@@ -45,6 +45,9 @@ private:
 	void LMBDown();
 	void LMBUp();
 	void Attack();
+	void UsedSkillA();
+	void UsedSkillB();
+	void UsedSkillC();
 
 private:
 	void SetInterpToEnemy(bool Interp);
@@ -96,6 +99,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetPlayerMaxMana() { return MaxMana; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsPlayerAttacking() { return IsAttacking; }
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -155,7 +161,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", Meta = (AllowPrivateAccess = true))
 	bool bHasCombatTarget;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", Meta = (AllowPrivateAccess = true))
 	bool IsAttacking = false;
 
 	UPROPERTY(VisibleAnywhere)
@@ -167,6 +173,32 @@ private:
 	float InterpSpeed;
 	bool bInterpToEnemy;
 	bool bLMBDown = false;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	float SkillA_CoolTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	float SkillA_CurTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	float SkillB_CoolTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	float SkillB_CurTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	float SkillC_CoolTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	float SkillC_CurTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	bool IsSkillA = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	bool IsSkillB = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SKill", Meta = (AllowPrivateAccess = true))
+	bool IsSkillC = false;
 
 public:
 	FORCEINLINE void SetHasCombatTarget(bool HasTarget) { bHasCombatTarget = HasTarget; }

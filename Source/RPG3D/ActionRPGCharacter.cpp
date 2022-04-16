@@ -61,6 +61,13 @@ AActionRPGCharacter::AActionRPGCharacter()
 	MaxMana = 100.f;
 	Mana = 100.f;
 	Damage = 25.f;
+
+	SkillA_CoolTime = 2.f;
+	SkillA_CurTime = 2.f;
+	SkillB_CoolTime = 3.f;
+	SkillB_CurTime = 3.f;
+	SkillC_CoolTime = 5.f;
+	SkillC_CurTime = 5.f;
 }
 
 // Called when the game starts or when spawned
@@ -108,6 +115,34 @@ void AActionRPGCharacter::Tick(float DeltaTime)
 			MainPlayerController->EnemyLocation = CombatTargetLocation;
 		}
 	}
+
+	if (IsSkillA)
+	{
+		SkillA_CurTime -= DeltaTime;
+		if (SkillA_CurTime <= 0.f)
+		{
+			SkillA_CurTime = SkillA_CoolTime;
+			IsSkillA = false;
+		}
+	}
+	if (IsSkillB)
+	{
+		SkillB_CurTime -= DeltaTime;
+		if (SkillB_CurTime <= 0.f)
+		{
+			SkillB_CurTime = SkillB_CoolTime;
+			IsSkillB = false;
+		}
+	}
+	if (IsSkillC)
+	{
+		SkillC_CurTime -= DeltaTime;
+		if (SkillC_CurTime <= 0.f)
+		{
+			SkillC_CurTime = SkillC_CoolTime;
+			IsSkillC = false;
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -126,6 +161,9 @@ void AActionRPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction(TEXT("LMB"), EInputEvent::IE_Pressed, this, &AActionRPGCharacter::LMBUp);
 	PlayerInputComponent->BindAction(TEXT("CameraToggle"), EInputEvent::IE_Pressed, this, &AActionRPGCharacter::CameraMoveOn);
 	PlayerInputComponent->BindAction(TEXT("CameraToggle"), EInputEvent::IE_Released, this, &AActionRPGCharacter::CameraMoveOff);
+	PlayerInputComponent->BindAction(TEXT("SkillA"), EInputEvent::IE_Pressed, this, &AActionRPGCharacter::UsedSkillA);
+	PlayerInputComponent->BindAction(TEXT("SkillB"), EInputEvent::IE_Pressed, this, &AActionRPGCharacter::UsedSkillB);
+	PlayerInputComponent->BindAction(TEXT("SkillC"), EInputEvent::IE_Pressed, this, &AActionRPGCharacter::UsedSkillC);
 }
 
 void AActionRPGCharacter::CombatOnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -350,4 +388,29 @@ void AActionRPGCharacter::ActivateCollision()
 void AActionRPGCharacter::DeactivateCollision()
 {
 	CombatCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AActionRPGCharacter::UsedSkillA()
+{
+	if (IsSkillA)
+		return;
+
+	IsSkillA = true;
+	SkillA_CurTime = SkillA_CoolTime;
+}
+void AActionRPGCharacter::UsedSkillB()
+{
+	if (IsSkillB)
+		return;
+
+	IsSkillB = true;
+	SkillB_CurTime = SkillB_CoolTime;
+}
+void AActionRPGCharacter::UsedSkillC()
+{
+	if (IsSkillC)
+		return;
+
+	IsSkillC = true;
+	SkillC_CurTime = SkillC_CoolTime;
 }
