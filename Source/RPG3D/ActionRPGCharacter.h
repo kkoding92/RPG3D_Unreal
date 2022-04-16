@@ -85,6 +85,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DeathEnd();
 
+	UFUNCTION(BlueprintCallable)
+	float GetPlayerHealth() { return Health; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetPlayerMaxHealth() { return MaxHealth; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetPlayerMana() { return Mana; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetPlayerMaxMana() { return MaxMana; }
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
@@ -130,6 +142,12 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", Meta = (AllowPrivateAccess = true))
 	float Health;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Stats", Meta = (AllowPrivateAccess = true))
+	float MaxMana;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", Meta = (AllowPrivateAccess = true))
+	float Mana;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Combat", Meta = (AllowPrivateAccess = true))
 	float Damage;

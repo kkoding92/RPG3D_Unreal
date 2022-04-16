@@ -58,6 +58,8 @@ AActionRPGCharacter::AActionRPGCharacter()
 
 	MaxHealth = 100.f;
 	Health = 100.f;
+	MaxMana = 100.f;
+	Mana = 100.f;
 	Damage = 25.f;
 }
 
@@ -244,21 +246,28 @@ void AActionRPGCharacter::LeftRight(float Value)
 
 void AActionRPGCharacter::Yaw(float Value)
 {
+	if (CameraToggle)
+		return;
+
 	AddControllerYawInput(Value);
 }
 
 void AActionRPGCharacter::Pitch(float Value)
 {
+	if (CameraToggle)
+		return;
+
 	AddControllerPitchInput(Value);
 }
 
 void AActionRPGCharacter::CameraMoveOn()
 {
-	CameraToggle = true;
+	(!CameraToggle) ? MainPlayerController->bShowMouseCursor = true : MainPlayerController->bShowMouseCursor = false;
 }
+
 void AActionRPGCharacter::CameraMoveOff()
 {
-	CameraToggle = false;
+	CameraToggle = !CameraToggle;
 }
 
 void AActionRPGCharacter::Jump()
