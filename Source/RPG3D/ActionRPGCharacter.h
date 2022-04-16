@@ -82,6 +82,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DeactivateCollision();
 
+	UFUNCTION(BlueprintCallable)
+	void DeathEnd();
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;

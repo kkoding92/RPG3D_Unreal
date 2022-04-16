@@ -87,6 +87,9 @@ void AActionRPGCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (MovementStatus == EMovementStatus::EMS_Dead)
+		return;
+
 	if (bInterpToEnemy && CombatTarget)
 	{
 		FRotator LookAtYaw = GetLookAtRotationYaw(CombatTarget->GetTargetLocation());
@@ -188,21 +191,22 @@ void AActionRPGCharacter::Attack()
 	IsAttacking = true;
 }
 
+void AActionRPGCharacter::DeathEnd()
+{
+	GetMesh()->bPauseAnims = true;
+	GetMesh()->bNoSkeletonUpdate = true;
+}
+
 void AActionRPGCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (MovementStatus != EMovementStatus::EMS_Dead)
+	if (MovementStatus == EMovementStatus::EMS_Dead)
+		return;
+
+	IsAttacking = false;
+	SetInterpToEnemy(false);
+	if (bLMBDown)
 	{
-		IsAttacking = false;
-		SetInterpToEnemy(false);
-		if (bLMBDown)
-		{
-			Attack();
-		}
-	}
-	else
-	{
-		GetMesh()->bPauseAnims = true;
-		GetMesh()->bNoSkeletonUpdate = true;
+		Attack();
 	}
 }
 

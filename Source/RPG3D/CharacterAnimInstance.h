@@ -26,6 +26,9 @@ private:
 	UFUNCTION()
 	void AnimNotify_DeactivateCollision();
 
+	UFUNCTION()
+	void AnimNotify_DeathEnd();
+
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

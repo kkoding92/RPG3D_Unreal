@@ -94,6 +94,17 @@ void UCharacterAnimInstance::AnimNotify_DeactivateCollision()
 	}
 }
 
+void UCharacterAnimInstance::AnimNotify_DeathEnd()
+{
+	if (IsValid(Pawn))
+	{
+
+		Main = Cast<AActionRPGCharacter>(Pawn);
+		if (IsValid(Main))
+			Main->DeathEnd();
+	}
+}
+
 void UCharacterAnimInstance::JumpToSection(int32 SectionIndex)
 {
 	FName Name = GetAttackMontageName(SectionIndex);
