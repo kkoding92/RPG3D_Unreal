@@ -20,25 +20,77 @@ void UCharacterAnimInstance::PlayAttackMontage()
 	Montage_Play(AttackMontage, 1.f);
 }
 
-void UCharacterAnimInstance::AnimNotify_AttackHit()
+void UCharacterAnimInstance::PlayDeathMontage()
 {
-	UE_LOG(LogTemp, Log, TEXT("Anim Notify : AttackHit"));
+	Montage_Play(AttackMontage, 1.0f);
+	Montage_JumpToSection(FName("Death"));
+}
+
+void UCharacterAnimInstance::NativeInitializeAnimation()
+{
+	Super::NativeInitializeAnimation();
+
+	if (Pawn == nullptr)
+	{
+		Pawn = TryGetPawnOwner();
+		if (Pawn)
+		{
+			Main = Cast<AActionRPGCharacter>(Pawn);
+		}
+	}
 }
 
 void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	auto Pawn = TryGetPawnOwner();
+	if (Pawn == nullptr)
+	{
+		Pawn = TryGetPawnOwner();
+	}
+
 	if (IsValid(Pawn))
 	{
 		Speed = Pawn->GetVelocity().Size();
 
-		auto Character = Cast<AActionRPGCharacter>(Pawn);
-		if (IsValid(Character))
+		Main = Cast<AActionRPGCharacter>(Pawn);
+		if (IsValid(Main))
 		{
-			IsFalling = Character->GetMovementComponent()->IsFalling();
+			IsFalling = Main->GetMovementComponent()->IsFalling();
 		}
+	}
+}
+
+void UCharacterAnimInstance::AnimNotify_PlaySwingSound()
+{
+	if (IsValid(Pawn))
+	{
+
+		Main = Cast<AActionRPGCharacter>(Pawn);
+		if (IsValid(Main))
+			Main->PlaySwingSound();
+	}
+}
+
+void UCharacterAnimInstance::AnimNotify_ActivateCollision()
+{
+	if (IsValid(Pawn))
+	{
+
+		Main = Cast<AActionRPGCharacter>(Pawn);
+		if (IsValid(Main))
+			Main->ActivateCollision();
+	}
+}
+
+void UCharacterAnimInstance::AnimNotify_DeactivateCollision()
+{
+	if (IsValid(Pawn))
+	{
+
+		Main = Cast<AActionRPGCharacter>(Pawn);
+		if (IsValid(Main))
+			Main->DeactivateCollision();
 	}
 }
 

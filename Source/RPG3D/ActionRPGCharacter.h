@@ -42,12 +42,45 @@ private:
 	void Pitch(float Value);
 	void CameraMoveOn();
 	void CameraMoveOff();
+	void LMBDown();
+	void LMBUp();
 	void Attack();
 
+private:
+	void SetInterpToEnemy(bool Interp);
+
+	FRotator GetLookAtRotationYaw(FVector Target);
+
+	void Die();
 
 public:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	void DecrementHealth(float Amount);
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION()
+	void CombatOnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void CombatOnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void PlaySwingSound();
+
+	UFUNCTION(BlueprintCallable)
+	AEnemy* GetCombatTarget() { return CombatTarget; }
+
+	UFUNCTION(BlueprintCallable)
+	bool GetHasCombatTarget() { return bHasCombatTarget; }
+
+	UFUNCTION(BlueprintCallable)
+	void ActivateCollision();
+
+	UFUNCTION(BlueprintCallable)
+	void DeactivateCollision();
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -62,6 +95,45 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Enums", Meta = (AllowPrivateAccess = true))
 	EMovementStatus MovementStatus;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Controller", Meta = (AllowPrivateAccess = true))
+	class AMainPlayerController* MainPlayerController;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	FVector CombatTargetLocation;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	class AEnemy* CombatTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	class UParticleSystem* HitParticles;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	class USoundCue* HitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	class USoundCue* SwingSound;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item | Combat", Meta = (AllowPrivateAccess = true))
+	class UBoxComponent* CombatCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	TSubclassOf<UDamageType> DamageTypeClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	AController* WeaponInstigator;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Stats", Meta = (AllowPrivateAccess = true))
+	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", Meta = (AllowPrivateAccess = true))
+	float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Combat", Meta = (AllowPrivateAccess = true))
+	float Damage;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	bool bHasCombatTarget;
+
 	UPROPERTY(VisibleAnywhere)
 	bool IsAttacking = false;
 
@@ -70,4 +142,16 @@ private:
 
 	UPROPERTY()
 	int32 AttackIndex = 0;
+
+	float InterpSpeed;
+	bool bInterpToEnemy;
+	bool bLMBDown = false;
+
+public:
+	FORCEINLINE void SetHasCombatTarget(bool HasTarget) { bHasCombatTarget = HasTarget; }
+	FORCEINLINE void SetCombatTarget(AEnemy* Target) { CombatTarget = Target; }
+	FORCEINLINE AMainPlayerController* GetPlayerController() { return MainPlayerController; }
+	FORCEINLINE UParticleSystem* GetHitParticles() { return HitParticles; };
+	FORCEINLINE USoundCue* GetHitSound() { return HitSound; }
+	FORCEINLINE void SetInstigator(AController* Inst) { WeaponInstigator = Inst; }
 };

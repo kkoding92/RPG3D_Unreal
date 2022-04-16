@@ -18,7 +18,15 @@ private:
 	UCharacterAnimInstance();
 
 	UFUNCTION()
-	void AnimNotify_AttackHit();
+	void AnimNotify_PlaySwingSound();
+
+	UFUNCTION()
+	void AnimNotify_ActivateCollision();
+
+	UFUNCTION()
+	void AnimNotify_DeactivateCollision();
+
+	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
@@ -26,6 +34,7 @@ private:
 
 public:
 	void PlayAttackMontage();
+	void PlayDeathMontage();
 	void JumpToSection(int32 SectionIndex);
 
 private:
@@ -43,4 +52,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, Meta = (AllowPrivateAccess = true))
+	class APawn* Pawn;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, Meta = (AllowPrivateAccess = true))
+	class AActionRPGCharacter* Main;
 };
